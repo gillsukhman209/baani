@@ -1,0 +1,16 @@
+# Secrets
+gurbani/Secrets.plist
+scripts/
+
+# Xcode
+*.xcuserstate
+*.xcuserdatad/
+xcuserdata/
+DerivedData/
+build/
+*.moved-aside
+*.hmap
+*.ipa
+
+# macOS
+.DS_Store
