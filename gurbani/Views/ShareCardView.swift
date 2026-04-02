@@ -42,7 +42,7 @@ struct ShareCardView: View {
             .padding(.vertical, 36)
 
             HStack {
-                Text("Bani")
+                Text("Simple Gurbani")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(Color(hex: 0xD4943A))
                 Spacer()

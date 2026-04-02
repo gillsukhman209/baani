@@ -66,9 +66,9 @@ struct SettingsView: View {
                     .padding(.vertical, 10)
                 }
 
-                Section("About Bani") {
+                Section("About Simple Gurbani") {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Bani helps you understand Gurbani word by word. Built for the Sikh diaspora — those who can recite but want to deeply understand what they read.")
+                        Text("Simple Gurbani helps you understand Gurbani word by word. Built for the Sikh diaspora — those who can recite but want to deeply understand what they read.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
 

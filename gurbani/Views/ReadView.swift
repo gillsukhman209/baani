@@ -60,7 +60,7 @@ struct BaniReadView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(bani?.name ?? "Bani")
+        .navigationTitle(bani?.name ?? "Simple Gurbani")
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {

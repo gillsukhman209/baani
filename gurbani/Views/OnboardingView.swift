@@ -73,7 +73,7 @@ struct OnboardingView: View {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(BaniTheme.gurmukhiColor)
 
-            Text("Bani helps you discover the meaning behind\nevery word of Gurbani — one tap at a time.")
+            Text("Simple Gurbani helps you discover the meaning\nbehind every word — one tap at a time.")
                 .font(.system(size: 16))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(BaniTheme.textSecondary)

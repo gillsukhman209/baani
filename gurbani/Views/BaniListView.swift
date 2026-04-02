@@ -40,7 +40,7 @@ struct BaniListView: View {
                     .padding(.bottom, 24)
                 }
             }
-            .navigationTitle("Bani")
+            .navigationTitle("Simple Gurbani")
             .navigationDestination(for: Int.self) { baniID in
                 BaniReadView(baniID: baniID)
             }
