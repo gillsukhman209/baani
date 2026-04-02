@@ -2,6 +2,13 @@ import Foundation
 import SwiftData
 import SwiftUI
 
+enum EnglishMode: String, CaseIterable {
+    case off = "Off"
+    case simple = "Simple"
+    case scholar = "Scholar"
+}
+
+// Kept for backward compat with any remaining references
 enum TranslationMode: String, CaseIterable {
     case simple = "Simple"
     case punjabi = "Punjabi"
@@ -9,7 +16,7 @@ enum TranslationMode: String, CaseIterable {
     case both = "Both"
 }
 
-// Flat item for the lazy list — avoids nested ForEach
+// Flat item for the lazy list
 enum ReadItem: Identifiable {
     case sectionHeader(id: String, title: String)
     case line(BaniLine)
@@ -36,7 +43,13 @@ final class ReadViewModel {
     var readLines = 0
     var isWordInDeck = false
     var hasSimpleTranslations = false
-    var translationMode: TranslationMode = .both
+
+    // New: two independent settings
+    var englishMode: EnglishMode = .simple
+    var showPunjabi: Bool = true
+
+    // Legacy compat
+    var translationMode: TranslationMode { .simple }
 
     var readProgress: Double {
         guard totalLines > 0 else { return 0 }
@@ -58,8 +71,10 @@ final class ReadViewModel {
         readLines = lines.filter(\.isRead).count
         hasSimpleTranslations = lines.contains { $0.simpleTranslation != nil }
 
-        let storedMode = UserDefaults.standard.string(forKey: "preferredTranslationMode") ?? "Both"
-        translationMode = TranslationMode(rawValue: storedMode) ?? .both
+        // Load settings
+        let storedEnglish = UserDefaults.standard.string(forKey: "englishMode") ?? "Simple"
+        englishMode = EnglishMode(rawValue: storedEnglish) ?? .simple
+        showPunjabi = UserDefaults.standard.object(forKey: "showPunjabi") as? Bool ?? true
 
         // Flatten into a single list for LazyVStack
         var grouped: [Int: [BaniLine]] = [:]
@@ -92,9 +107,14 @@ final class ReadViewModel {
         items = flat
     }
 
-    func setTranslationMode(_ mode: TranslationMode) {
-        translationMode = mode
-        UserDefaults.standard.set(mode.rawValue, forKey: "preferredTranslationMode")
+    func setEnglishMode(_ mode: EnglishMode) {
+        englishMode = mode
+        UserDefaults.standard.set(mode.rawValue, forKey: "englishMode")
+    }
+
+    func setShowPunjabi(_ show: Bool) {
+        showPunjabi = show
+        UserDefaults.standard.set(show, forKey: "showPunjabi")
     }
 
     func tapWord(_ word: String, line: BaniLine) {

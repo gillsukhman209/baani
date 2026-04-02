@@ -153,8 +153,8 @@ struct BaniReadView: View {
                         BaniLineView(
                             line: line,
                             gurmukhiSize: gurmukhiSize,
-                            showTranslation: showTranslation,
-                            translationMode: viewModel.translationMode,
+                            englishMode: viewModel.englishMode,
+                            showPunjabi: viewModel.showPunjabi,
                             showTooltip: showTooltip && viewModel.items.first(where: {
                                 if case .line = $0 { return true }
                                 return false
@@ -234,8 +234,8 @@ struct BaniReadView: View {
 struct BaniLineView: View {
     let line: BaniLine
     let gurmukhiSize: CGFloat
-    let showTranslation: Bool
-    let translationMode: TranslationMode
+    let englishMode: EnglishMode
+    let showPunjabi: Bool
     let showTooltip: Bool
     let onWordTap: (String) -> Void
     let onMarkRead: () -> Void
@@ -246,7 +246,6 @@ struct BaniLineView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            // Single tappable Text — no FlowLayout, no per-word views
             ZStack(alignment: .topLeading) {
                 Text(line.unicode)
                     .font(.system(size: gurmukhiSize, weight: .bold))
@@ -276,49 +275,30 @@ struct BaniLineView: View {
                 }
             }
 
-            // Translations
-            if showTranslation {
-                switch translationMode {
-                case .simple:
-                    let text = line.simpleTranslation ?? line.translation
-                    if !text.isEmpty {
-                        Text(text)
-                            .font(.system(size: BaniTheme.translationSize))
-                            .foregroundStyle(BaniTheme.secondaryText)
-                    }
-                case .punjabi:
-                    let text = line.punjabiTranslation ?? line.translation
-                    if !text.isEmpty {
-                        Text(text)
-                            .font(.system(size: BaniTheme.translationSize + 2))
-                            .foregroundStyle(BaniTheme.secondaryText)
-                    }
-                case .scholar:
-                    if !line.translation.isEmpty {
-                        Text(line.translation)
-                            .font(.system(size: BaniTheme.translationSize))
-                            .foregroundStyle(BaniTheme.secondaryText)
-                    }
-                case .both:
-                    VStack(alignment: .leading, spacing: 6) {
-                        let simple = line.simpleTranslation
-                        if let simple, !simple.isEmpty {
-                            Text(simple)
-                                .font(.system(size: BaniTheme.translationSize))
-                                .foregroundStyle(BaniTheme.secondaryText)
-                        } else {
-                            Text("Translating...")
-                                .font(.system(size: BaniTheme.translationSize))
-                                .foregroundStyle(BaniTheme.secondaryText.opacity(0.4))
-                                .italic()
-                        }
-                        if !line.translation.isEmpty {
-                            Text(line.translation)
-                                .font(.system(size: BaniTheme.translationSize))
-                                .foregroundStyle(BaniTheme.secondaryText.opacity(0.6))
-                        }
-                    }
+            // Punjabi translation
+            if showPunjabi, let punjabi = line.punjabiTranslation, !punjabi.isEmpty {
+                Text(punjabi)
+                    .font(.system(size: BaniTheme.translationSize + 2))
+                    .foregroundStyle(BaniTheme.textSecondary)
+            }
+
+            // English translation
+            switch englishMode {
+            case .simple:
+                let text = line.simpleTranslation ?? line.translation
+                if !text.isEmpty {
+                    Text(text)
+                        .font(.system(size: BaniTheme.translationSize))
+                        .foregroundStyle(BaniTheme.textSecondary.opacity(showPunjabi ? 0.7 : 1.0))
                 }
+            case .scholar:
+                if !line.translation.isEmpty {
+                    Text(line.translation)
+                        .font(.system(size: BaniTheme.translationSize))
+                        .foregroundStyle(BaniTheme.textSecondary.opacity(showPunjabi ? 0.7 : 1.0))
+                }
+            case .off:
+                EmptyView()
             }
         }
         .padding(.vertical, 12)

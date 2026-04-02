@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("showTranslation") private var showTranslation = true
     @AppStorage("gurmukhiFontSize") private var gurmukhiFontSize = 1
     @AppStorage("hapticFeedback") private var hapticEnabled = true
-    @AppStorage("preferredTranslationMode") private var translationMode = "Both"
+    @AppStorage("englishMode") private var englishMode = "Simple"
+    @AppStorage("showPunjabi") private var showPunjabi = true
 
     private var fontSizeLabel: String {
         switch gurmukhiFontSize {
@@ -17,10 +17,23 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Display") {
-                    Toggle("Show English Translation", isOn: $showTranslation)
-                        .tint(BaniTheme.accentColor)
+                Section("Translations") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("English")
+                        Picker("English", selection: $englishMode) {
+                            Text("Off").tag("Off")
+                            Text("Simple").tag("Simple")
+                            Text("Scholar").tag("Scholar")
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                    .padding(.vertical, 4)
 
+                    Toggle("Punjabi (ਪੰਜਾਬੀ)", isOn: $showPunjabi)
+                        .tint(BaniTheme.accentColor)
+                }
+
+                Section("Display") {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Gurmukhi Font Size: \(fontSizeLabel)")
                         Picker("Font Size", selection: $gurmukhiFontSize) {
@@ -34,35 +47,31 @@ struct SettingsView: View {
 
                     Toggle("Haptic Feedback", isOn: $hapticEnabled)
                         .tint(BaniTheme.accentColor)
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Translation Style")
-                        Picker("Translation Style", selection: $translationMode) {
-                            Text("Simple").tag("Simple")
-                            Text("Punjabi").tag("Punjabi")
-                            Text("Scholar").tag("Scholar")
-                            Text("Both").tag("Both")
-                        }
-                        .pickerStyle(.segmented)
-                    }
-                    .padding(.vertical, 4)
                 }
 
                 Section("Preview") {
-                    VStack(spacing: 10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("ੴ ਸਤਿ ਨਾਮੁ ਕਰਤਾ ਪੁਰਖੁ")
                             .font(.system(size: previewSize, weight: .bold))
                             .foregroundStyle(BaniTheme.gurmukhiColor)
 
-                        if showTranslation {
-                            Text(translationMode == "Simple"
-                                 ? "One God, whose name is Truth, the Creator of everything"
-                                 : "One Creator, Truth is the Name, Creative Being")
-                                .font(.system(size: BaniTheme.translationSize))
+                        if showPunjabi {
+                            Text("ਸਭ ਕੁਝ ਬਣਾਉਣ ਵਾਲਾ ਇੱਕ ਰੱਬ, ਜਿਸ ਦਾ ਨਾਮ ਸੱਚ ਹੈ")
+                                .font(.system(size: BaniTheme.translationSize + 2))
                                 .foregroundStyle(BaniTheme.textSecondary)
                         }
+
+                        if englishMode == "Simple" {
+                            Text("One God, whose name is Truth, the Creator of everything")
+                                .font(.system(size: BaniTheme.translationSize))
+                                .foregroundStyle(BaniTheme.textSecondary.opacity(showPunjabi ? 0.7 : 1.0))
+                        } else if englishMode == "Scholar" {
+                            Text("One Creator, Truth is the Name, Creative Being")
+                                .font(.system(size: BaniTheme.translationSize))
+                                .foregroundStyle(BaniTheme.textSecondary.opacity(showPunjabi ? 0.7 : 1.0))
+                        }
                     }
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 10)
                 }
 
