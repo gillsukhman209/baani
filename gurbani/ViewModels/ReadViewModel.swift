@@ -18,13 +18,13 @@ enum TranslationMode: String, CaseIterable {
 
 // Flat item for the lazy list
 enum ReadItem: Identifiable {
-    case sectionHeader(id: String, title: String)
+    case sectionHeader(id: String, title: String, pauriNumber: Int)
     case line(BaniLine)
     case divider(id: String)
 
     var id: String {
         switch self {
-        case .sectionHeader(let id, _): id
+        case .sectionHeader(let id, _, _): id
         case .line(let line): "line-\(line.lineID)"
         case .divider(let id): id
         }
@@ -34,6 +34,7 @@ enum ReadItem: Identifiable {
 @Observable
 final class ReadViewModel {
     var items: [ReadItem] = []
+    var pauriLines: [Int: [BaniLine]] = [:]  // pauriNumber → lines
     var selectedWord: WordEntry?
     var selectedRawWord: String?
     var selectedLineContext: String?
@@ -76,11 +77,12 @@ final class ReadViewModel {
         englishMode = EnglishMode(rawValue: storedEnglish) ?? .simple
         showPunjabi = UserDefaults.standard.object(forKey: "showPunjabi") as? Bool ?? true
 
-        // Flatten into a single list for LazyVStack
+        // Group by pauri
         var grouped: [Int: [BaniLine]] = [:]
         for line in lines {
             grouped[line.pauriNumber, default: []].append(line)
         }
+        pauriLines = grouped
 
         var flat: [ReadItem] = []
         let sortedKeys = grouped.keys.sorted()
@@ -91,7 +93,7 @@ final class ReadViewModel {
 
             if !title.isEmpty {
                 if groupIdx > 0 { flat.append(.divider(id: "gap-\(key)")) }
-                flat.append(.sectionHeader(id: "header-\(key)", title: title))
+                flat.append(.sectionHeader(id: "header-\(key)", title: title, pauriNumber: key))
             } else if groupIdx > 0 {
                 flat.append(.divider(id: "gap-\(key)"))
             }

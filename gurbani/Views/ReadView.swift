@@ -135,7 +135,7 @@ struct BaniReadView: View {
                 // Flat list of items
                 ForEach(viewModel.items) { item in
                     switch item {
-                    case .sectionHeader(_, let title):
+                    case .sectionHeader(_, let title, let pauriNumber):
                         VStack(alignment: .leading, spacing: 6) {
                             Text(title)
                                 .font(.system(size: BaniTheme.sectionHeaderSize, weight: .semibold))
@@ -148,6 +148,13 @@ struct BaniReadView: View {
                         }
                         .padding(.horizontal, BaniTheme.screenPadding)
                         .padding(.bottom, 16)
+                        .contextMenu {
+                            Button {
+                                sharePauri(pauriNumber: pauriNumber, title: title)
+                            } label: {
+                                Label("Share this pauri", systemImage: "square.and.arrow.up")
+                            }
+                        }
 
                     case .line(let line):
                         BaniLineView(
@@ -190,6 +197,31 @@ struct BaniReadView: View {
                 Spacer().frame(height: 60)
             }
         }
+    }
+
+    // MARK: - Share Pauri
+
+    private func sharePauri(pauriNumber: Int, title: String) {
+        guard let lines = viewModel.pauriLines[pauriNumber], !lines.isEmpty else { return }
+
+        // Convert to plain data so ImageRenderer doesn't choke on @Model objects
+        let data = lines.map { line in
+            ShareLineData(
+                id: line.lineID,
+                gurmukhi: line.unicode,
+                english: line.simpleTranslation ?? line.translation,
+                punjabi: line.punjabiTranslation ?? ""
+            )
+        }
+
+        let card = PauriShareCardView(
+            title: title,
+            lineData: data,
+            showPunjabi: viewModel.showPunjabi,
+            baniName: bani?.name ?? "Gurbani"
+        )
+        let image = card.renderImage()
+        shareViaUIKit(image: image)
     }
 
     // MARK: - Bani Header
