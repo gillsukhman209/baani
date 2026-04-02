@@ -10,12 +10,6 @@ struct MainTabView: View {
             Tab("Read", systemImage: "book", value: "Read") {
                 BaniListView(initialBaniID: initialBaniID)
             }
-            Tab("Learn", systemImage: "sparkles", value: "Learn") {
-                LearnView()
-            }
-            Tab("Progress", systemImage: "chart.bar", value: "Progress") {
-                ProgressTabView()
-            }
             Tab("Ask", systemImage: "bubble.left.and.bubble.right.fill", value: "Ask") {
                 AskView(pendingQuestion: $pendingAskQuestion)
             }
@@ -23,7 +17,7 @@ struct MainTabView: View {
                 SettingsView()
             }
         }
-        .tint(BaniTheme.saffron)
+        .tint(BaniTheme.amber)
         .onReceive(NotificationCenter.default.publisher(for: .askAboutLine)) { notification in
             if let question = notification.object as? String {
                 pendingAskQuestion = question

@@ -1,16 +1,31 @@
 import SwiftUI
 
 enum BaniTheme {
-    // Colors
-    static let saffron = Color(hex: 0xFF9933)
-    static let navy = Color(hex: 0x1B2A4A)
-    static let backgroundLight = Color(hex: 0xFAF8F5)
-    static let backgroundDark = Color(hex: 0x1C1C1E)
+    // New vibrant palette
+    static let amber = Color(hex: 0xF59E0B)        // Warm golden amber — primary accent
+    static let deepPlum = Color(hex: 0x2D1B4E)     // Rich purple-black for text
+    static let coral = Color(hex: 0xEF6461)         // Warm coral for alerts/highlights
+    static let teal = Color(hex: 0x14B8A6)          // Fresh teal for success states
+    static let lavender = Color(hex: 0x8B5CF6)      // Soft purple accent
+
+    static let backgroundLight = Color(hex: 0xFCFBF8)
+    static let backgroundDark = Color(hex: 0x121015)
     static let cardLight = Color.white
-    static let cardDark = Color(hex: 0x2C2C2E)
-    static let secondaryText = Color(hex: 0x8A8A8E)
-    static let divider = Color(hex: 0xF0F0F0)
-    static let trackGrey = Color(hex: 0xE5E5EA)
+    static let cardDark = Color(hex: 0x1E1A24)
+    static let secondaryText = Color(hex: 0x9CA3AF)
+    static let divider = Color(hex: 0xF0ECE6)
+    static let trackGrey = Color(hex: 0xE5E1D8)
+
+    // Gradient
+    static let accentGradient = LinearGradient(
+        colors: [amber, Color(hex: 0xD97706)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    // Legacy alias so existing code doesn't break
+    static let saffron = amber
+    static let navy = deepPlum
 
     // Typography sizes
     static let gurmukhiSizeSmall: CGFloat = 22
@@ -37,7 +52,6 @@ extension Color {
     }
 }
 
-// Adaptive colors for dark mode
 extension BaniTheme {
     static var background: Color {
         Color(light: backgroundLight, dark: backgroundDark)
@@ -48,7 +62,7 @@ extension BaniTheme {
     }
 
     static var gurmukhiColor: Color {
-        Color(light: navy, dark: .white)
+        Color(light: deepPlum, dark: .white)
     }
 }
 

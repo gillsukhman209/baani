@@ -8,6 +8,7 @@ final class AskViewModel {
     var inputText = ""
     var isTyping = false
     var showClearConfirmation = false
+    var showDeleteConfirmation = false
 
     private var streamingMessage: ConversationMessage?
 

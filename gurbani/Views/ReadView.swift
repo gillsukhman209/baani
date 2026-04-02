@@ -169,7 +169,8 @@ struct BaniReadView: View {
                                     name: .askAboutLine,
                                     object: question
                                 )
-                            }
+                            },
+                            baniName: bani?.name ?? "Gurbani"
                         )
                         .padding(.horizontal, BaniTheme.screenPadding)
 
@@ -239,6 +240,9 @@ struct BaniLineView: View {
     let onWordTap: (String) -> Void
     let onMarkRead: () -> Void
     var onAskAbout: ((String) -> Void)?
+    var baniName: String = ""
+    @State private var showShareSheet = false
+    @State private var shareImage: UIImage?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -326,6 +330,23 @@ struct BaniLineView: View {
                 onAskAbout?(question)
             } label: {
                 Label("Ask about this line", systemImage: "bubble.left.and.bubble.right")
+            }
+            Button {
+                let translation = line.simpleTranslation ?? line.translation
+                let card = ShareCardView(
+                    gurmukhi: line.unicode,
+                    translation: translation,
+                    baniName: baniName
+                )
+                shareImage = card.renderImage()
+                showShareSheet = true
+            } label: {
+                Label("Share as card", systemImage: "square.and.arrow.up")
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if let image = shareImage {
+                ShareSheet(items: [image])
             }
         }
     }

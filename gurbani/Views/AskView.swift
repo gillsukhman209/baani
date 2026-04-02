@@ -24,11 +24,19 @@ struct AskView: View {
             .toolbar {
                 if !viewModel.messages.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            viewModel.showClearConfirmation = true
-                        } label: {
-                            Image(systemName: "square.and.pencil")
-                                .foregroundStyle(BaniTheme.saffron)
+                        HStack(spacing: 16) {
+                            Button {
+                                viewModel.showDeleteConfirmation = true
+                            } label: {
+                                Image(systemName: "trash")
+                                    .foregroundStyle(BaniTheme.coral)
+                            }
+                            Button {
+                                viewModel.showClearConfirmation = true
+                            } label: {
+                                Image(systemName: "square.and.pencil")
+                                    .foregroundStyle(BaniTheme.amber)
+                            }
                         }
                     }
                 }
@@ -39,6 +47,15 @@ struct AskView: View {
                     chips = viewModel.suggestedQuestions
                 }
                 Button("Cancel", role: .cancel) {}
+            }
+            .confirmationDialog("Delete all chat history?", isPresented: $viewModel.showDeleteConfirmation, titleVisibility: .visible) {
+                Button("Delete everything", role: .destructive) {
+                    viewModel.clearConversation(modelContext: modelContext)
+                    chips = viewModel.suggestedQuestions
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This will permanently delete your entire conversation history.")
             }
             .onAppear {
                 viewModel.loadMessages(modelContext: modelContext)
