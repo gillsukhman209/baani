@@ -16,7 +16,19 @@ struct BaniListView: View {
                     LoadingView()
                         .padding(.top, 100)
                 } else {
-                    LazyVStack(spacing: 28) {
+                    VStack(spacing: 32) {
+                        // Hero header
+                        VStack(spacing: 8) {
+                            Text("ੴ")
+                                .font(.system(size: 36))
+                                .foregroundStyle(BaniTheme.accentColor)
+                            Text("What will you read today?")
+                                .font(.system(size: 15))
+                                .foregroundStyle(BaniTheme.textSecondary)
+                        }
+                        .padding(.top, 8)
+
+                        // Bani sections
                         ForEach(TimeOfDay.allCases, id: \.self) { time in
                             let banis = allBanis.filter { $0.time == time }
                             if !banis.isEmpty {
@@ -25,14 +37,15 @@ struct BaniListView: View {
                         }
                     }
                     .padding(.horizontal, BaniTheme.screenPadding)
-                    .padding(.vertical, 16)
+                    .padding(.bottom, 24)
                 }
             }
             .navigationTitle("Bani")
             .navigationDestination(for: Int.self) { baniID in
                 BaniReadView(baniID: baniID)
             }
-            .background(BaniTheme.background)
+            .background(BaniTheme.background.ignoresSafeArea())
+            .toolbarBackground(BaniTheme.background, for: .navigationBar)
             .onAppear {
                 baniService.seedBaniList(modelContext: modelContext)
                 if let baniID = initialBaniID, !hasNavigatedInitial {
@@ -46,19 +59,24 @@ struct BaniListView: View {
     }
 }
 
-// MARK: - Time of Day Section
+// MARK: - Time Section
 
 struct BaniTimeSection: View {
     let time: TimeOfDay
     let banis: [Bani]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label(time.rawValue, systemImage: time.icon)
-                .font(.system(size: BaniTheme.sectionHeaderSize, weight: .semibold))
-                .foregroundStyle(BaniTheme.saffron)
-                .textCase(.uppercase)
-                .tracking(1.5)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 8) {
+                Image(systemName: time.icon)
+                    .font(.system(size: 13))
+                    .foregroundStyle(BaniTheme.accentColor)
+                Text(time.rawValue)
+                    .font(.system(size: BaniTheme.sectionHeaderSize, weight: .bold))
+                    .foregroundStyle(BaniTheme.accentColor)
+                    .textCase(.uppercase)
+                    .tracking(2)
+            }
 
             ForEach(banis, id: \.baniID) { bani in
                 NavigationLink(value: bani.baniID) {
@@ -76,34 +94,37 @@ struct BaniRow: View {
     let bani: Bani
 
     var body: some View {
-        HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(bani.unicode)
-                    .font(.system(size: 20))
-                    .foregroundStyle(BaniTheme.gurmukhiColor)
+        HStack(spacing: 16) {
+            // Gold circle with first Gurmukhi char
+            ZStack {
+                Circle()
+                    .fill(BaniTheme.accentColor.opacity(0.12))
+                    .frame(width: 48, height: 48)
+                Text(String(bani.unicode.prefix(1)))
+                    .font(.system(size: 22))
+                    .foregroundStyle(BaniTheme.accentColor)
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
                 Text(bani.name)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
-                HStack(spacing: 8) {
-                    Text("~\(bani.durationMinutes) min")
-                        .font(.caption2)
-                        .foregroundStyle(BaniTheme.secondaryText)
-                    if bani.isFetched {
-                        Label("Downloaded", systemImage: "checkmark.circle.fill")
-                            .font(.caption2)
-                            .foregroundStyle(BaniTheme.saffron)
-                    }
-                }
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(BaniTheme.gurmukhiColor)
+                Text(bani.unicode)
+                    .font(.system(size: 14))
+                    .foregroundStyle(BaniTheme.textSecondary)
+                Text("~\(bani.durationMinutes) min")
+                    .font(.system(size: 12))
+                    .foregroundStyle(BaniTheme.textSecondary.opacity(0.7))
             }
             Spacer()
             Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundStyle(.quaternary)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(BaniTheme.textSecondary.opacity(0.4))
         }
-        .padding()
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
         .background(BaniTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: BaniTheme.cornerRadius))
-        .shadow(color: .black.opacity(0.04), radius: 6, y: 3)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .shadow(color: Color(hex: 0xC9B99A).opacity(0.12), radius: 6, y: 3)
     }
 }

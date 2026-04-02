@@ -37,6 +37,7 @@ struct BaniApp: App {
         WindowGroup {
             RootView()
                 .environment(baniService)
+                .preferredColorScheme(.light)
         }
         .modelContainer(sharedModelContainer)
     }

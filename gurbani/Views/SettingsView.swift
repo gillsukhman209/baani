@@ -19,6 +19,7 @@ struct SettingsView: View {
             Form {
                 Section("Display") {
                     Toggle("Show English Translation", isOn: $showTranslation)
+                        .tint(BaniTheme.accentColor)
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Gurmukhi Font Size: \(fontSizeLabel)")
@@ -32,6 +33,7 @@ struct SettingsView: View {
                     .padding(.vertical, 4)
 
                     Toggle("Haptic Feedback", isOn: $hapticEnabled)
+                        .tint(BaniTheme.accentColor)
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Translation Style")
@@ -47,7 +49,7 @@ struct SettingsView: View {
                 }
 
                 Section("Preview") {
-                    VStack(spacing: 8) {
+                    VStack(spacing: 10) {
                         Text("ੴ ਸਤਿ ਨਾਮੁ ਕਰਤਾ ਪੁਰਖੁ")
                             .font(.system(size: previewSize, weight: .bold))
                             .foregroundStyle(BaniTheme.gurmukhiColor)
@@ -57,11 +59,11 @@ struct SettingsView: View {
                                  ? "One God, whose name is Truth, the Creator of everything"
                                  : "One Creator, Truth is the Name, Creative Being")
                                 .font(.system(size: BaniTheme.translationSize))
-                                .foregroundStyle(BaniTheme.secondaryText)
+                                .foregroundStyle(BaniTheme.textSecondary)
                         }
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, 10)
                 }
 
                 Section("About Bani") {
@@ -72,7 +74,7 @@ struct SettingsView: View {
 
                         Text("Built with love for the Sikh diaspora by a fellow Punjabi.")
                             .font(.caption)
-                            .foregroundStyle(BaniTheme.secondaryText)
+                            .foregroundStyle(BaniTheme.textSecondary)
 
                         Text("Gurbani data provided by BaniDB — an open-source Gurbani database and API.")
                             .font(.caption)
@@ -90,7 +92,10 @@ struct SettingsView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(BaniTheme.background.ignoresSafeArea())
             .navigationTitle("Settings")
+            .toolbarBackground(BaniTheme.background, for: .navigationBar)
         }
     }
 

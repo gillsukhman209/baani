@@ -1,33 +1,48 @@
 import SwiftUI
 
 enum BaniTheme {
-    // New vibrant palette
-    static let amber = Color(hex: 0xF59E0B)        // Warm golden amber — primary accent
-    static let deepPlum = Color(hex: 0x2D1B4E)     // Rich purple-black for text
-    static let coral = Color(hex: 0xEF6461)         // Warm coral for alerts/highlights
-    static let teal = Color(hex: 0x14B8A6)          // Fresh teal for success states
-    static let lavender = Color(hex: 0x8B5CF6)      // Soft purple accent
+    // Primary palette — warm and alive
+    static let gold = Color(hex: 0xD4943A)           // Warm golden honey
+    static let espresso = Color(hex: 0x2C1810)        // Rich dark brown for text
+    static let warmCream = Color(hex: 0xFFF8EF)       // Soft warm ivory bg
+    static let parchment = Color(hex: 0xFDF2E3)       // Slightly deeper warm card bg
+    static let terracotta = Color(hex: 0xC17B5A)      // Warm earthy accent
+    static let sage = Color(hex: 0x6B8F71)            // Muted green for success
+    static let rose = Color(hex: 0xD4726A)            // Soft warm red for alerts
 
-    static let backgroundLight = Color(hex: 0xFCFBF8)
-    static let backgroundDark = Color(hex: 0x121015)
-    static let cardLight = Color.white
-    static let cardDark = Color(hex: 0x1E1A24)
-    static let secondaryText = Color(hex: 0x9CA3AF)
-    static let divider = Color(hex: 0xF0ECE6)
-    static let trackGrey = Color(hex: 0xE5E1D8)
+    // Dark mode palette
+    static let darkBg = Color(hex: 0x1A1612)          // Warm dark walnut
+    static let darkCard = Color(hex: 0x2A2420)         // Warm dark card
+    static let darkAccent = Color(hex: 0xE8A951)       // Brighter gold for dark mode
 
-    // Gradient
-    static let accentGradient = LinearGradient(
-        colors: [amber, Color(hex: 0xD97706)],
+    // Neutrals
+    static let textSecondary = Color(hex: 0x8B7E74)    // Warm grey
+    static let dividerColor = Color(hex: 0xEDE5D8)     // Warm divider
+    static let trackColor = Color(hex: 0xE5DDD0)       // Warm track
+
+    // Gradients
+    static let goldGradient = LinearGradient(
+        colors: [Color(hex: 0xD4943A), Color(hex: 0xBF7B2A)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
+    static let warmGradient = LinearGradient(
+        colors: [Color(hex: 0xFFF8EF), Color(hex: 0xFDF2E3)],
+        startPoint: .top,
+        endPoint: .bottom
+    )
 
-    // Legacy alias so existing code doesn't break
-    static let saffron = amber
-    static let navy = deepPlum
+    // Aliases for backward compat
+    static let saffron = gold
+    static let amber = gold
+    static let navy = espresso
+    static let deepPlum = espresso
+    static let coral = rose
+    static let secondaryText = textSecondary
+    static let divider = dividerColor
+    static let trackGrey = trackColor
 
-    // Typography sizes
+    // Typography
     static let gurmukhiSizeSmall: CGFloat = 22
     static let gurmukhiSizeMedium: CGFloat = 28
     static let gurmukhiSizeLarge: CGFloat = 34
@@ -54,15 +69,27 @@ extension Color {
 
 extension BaniTheme {
     static var background: Color {
-        Color(light: backgroundLight, dark: backgroundDark)
+        Color(light: warmCream, dark: darkBg)
     }
 
     static var cardBackground: Color {
-        Color(light: cardLight, dark: cardDark)
+        Color(light: .white, dark: darkCard)
     }
 
     static var gurmukhiColor: Color {
-        Color(light: deepPlum, dark: .white)
+        Color(light: espresso, dark: Color(hex: 0xFAF0E6))
+    }
+
+    static var accentColor: Color {
+        Color(light: gold, dark: darkAccent)
+    }
+
+    static var inputBackground: Color {
+        Color(light: parchment, dark: Color(hex: 0x352F2B))
+    }
+
+    static var accentGradient: LinearGradient {
+        goldGradient
     }
 }
 
@@ -80,6 +107,6 @@ extension View {
             .padding()
             .background(BaniTheme.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: BaniTheme.cornerRadius))
-            .shadow(color: .black.opacity(0.04), radius: 6, y: 3)
+            .shadow(color: Color(hex: 0xC9B99A).opacity(0.15), radius: 8, y: 4)
     }
 }

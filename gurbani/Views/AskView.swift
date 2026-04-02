@@ -29,13 +29,13 @@ struct AskView: View {
                                 viewModel.showDeleteConfirmation = true
                             } label: {
                                 Image(systemName: "trash")
-                                    .foregroundStyle(BaniTheme.coral)
+                                    .foregroundStyle(BaniTheme.rose)
                             }
                             Button {
                                 viewModel.showClearConfirmation = true
                             } label: {
                                 Image(systemName: "square.and.pencil")
-                                    .foregroundStyle(BaniTheme.amber)
+                                    .foregroundStyle(BaniTheme.accentColor)
                             }
                         }
                     }
@@ -60,7 +60,6 @@ struct AskView: View {
             .onAppear {
                 viewModel.loadMessages(modelContext: modelContext)
                 if chips.isEmpty { chips = viewModel.suggestedQuestions }
-                // Handle pending question on appear (from deep link)
                 if let question = pendingQuestion, !question.isEmpty {
                     pendingQuestion = nil
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -84,16 +83,27 @@ struct AskView: View {
 
     private var emptyState: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                Spacer().frame(height: 40)
+            VStack(spacing: 28) {
+                Spacer().frame(height: 32)
 
-                Text("Your Gurbani guide. Ask anything.")
-                    .font(.subheadline)
-                    .foregroundStyle(BaniTheme.secondaryText)
+                ZStack {
+                    Circle()
+                        .fill(BaniTheme.accentColor.opacity(0.08))
+                        .frame(width: 110, height: 110)
+                    Text("ੴ")
+                        .font(.system(size: 52))
+                        .foregroundStyle(BaniTheme.accentColor)
+                }
 
-                Text("ੴ")
-                    .font(.system(size: 64))
-                    .foregroundStyle(BaniTheme.saffron)
+                VStack(spacing: 8) {
+                    Text("Your Gurbani guide")
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(BaniTheme.gurmukhiColor)
+                    Text("Ask anything about Sikhi, Gurbani, or history.")
+                        .font(.system(size: 15))
+                        .foregroundStyle(BaniTheme.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                     ForEach(chips, id: \.self) { question in
@@ -102,12 +112,12 @@ struct AskView: View {
                         } label: {
                             Text(question)
                                 .font(.system(size: 13))
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(BaniTheme.gurmukhiColor)
                                 .multilineTextAlignment(.leading)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 12)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(BaniTheme.saffron.opacity(0.1))
+                                .background(BaniTheme.accentColor.opacity(0.08))
                                 .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
                         .buttonStyle(.plain)
@@ -141,12 +151,8 @@ struct AskView: View {
                 .padding(.vertical, 16)
             }
             .onTapGesture { isInputFocused = false }
-            .onChange(of: viewModel.messages.count) {
-                scrollToBottom(proxy)
-            }
-            .onChange(of: viewModel.messages.last?.content) {
-                scrollToBottom(proxy)
-            }
+            .onChange(of: viewModel.messages.count) { scrollToBottom(proxy) }
+            .onChange(of: viewModel.messages.last?.content) { scrollToBottom(proxy) }
             .onAppear { scrollToBottom(proxy) }
         }
     }
@@ -168,7 +174,7 @@ struct AskView: View {
                 .focused($isInputFocused)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .background(Color(light: Color(hex: 0xF2F2F7), dark: Color(hex: 0x3A3A3C)))
+                .background(BaniTheme.inputBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .onSubmit {
                     viewModel.sendMessage(modelContext: modelContext)
@@ -184,8 +190,8 @@ struct AskView: View {
                     .frame(width: 36, height: 36)
                     .background(
                         viewModel.inputText.trimmingCharacters(in: .whitespaces).isEmpty
-                            ? Color.gray.opacity(0.4)
-                            : BaniTheme.saffron
+                            ? BaniTheme.trackColor
+                            : BaniTheme.accentColor
                     )
                     .clipShape(Circle())
             }
@@ -195,7 +201,7 @@ struct AskView: View {
         .padding(.vertical, 10)
         .background(
             BaniTheme.cardBackground
-                .shadow(color: .black.opacity(0.05), radius: 4, y: -2)
+                .shadow(color: Color(hex: 0xC9B99A).opacity(0.1), radius: 4, y: -2)
                 .ignoresSafeArea(edges: .bottom)
         )
     }
@@ -229,12 +235,12 @@ struct ChatBubble: View {
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .background(BaniTheme.saffron)
+                .background(BaniTheme.goldGradient)
                 .clipShape(BubbleShape(isUser: true))
 
             Text(Self.timeFormatter.string(from: message.timestamp))
                 .font(.system(size: 10))
-                .foregroundStyle(BaniTheme.secondaryText)
+                .foregroundStyle(BaniTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
     }
@@ -244,20 +250,21 @@ struct ChatBubble: View {
             HStack(alignment: .top, spacing: 8) {
                 Text("ੴ")
                     .font(.system(size: 16))
-                    .foregroundStyle(BaniTheme.saffron)
+                    .foregroundStyle(BaniTheme.accentColor)
                     .frame(width: 24)
                     .padding(.top, 6)
 
                 GurbaniAwareText(content: message.content)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
-                    .background(Color(light: Color(hex: 0xF2F2F7), dark: Color(hex: 0x2C2C2E)))
+                    .background(BaniTheme.cardBackground)
                     .clipShape(BubbleShape(isUser: false))
+                    .shadow(color: Color(hex: 0xC9B99A).opacity(0.1), radius: 4, y: 2)
             }
 
             Text(Self.timeFormatter.string(from: message.timestamp))
                 .font(.system(size: 10))
-                .foregroundStyle(BaniTheme.secondaryText)
+                .foregroundStyle(BaniTheme.textSecondary)
                 .padding(.leading, 32)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -266,14 +273,14 @@ struct ChatBubble: View {
     private var errorBubble: some View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.circle")
-                .foregroundStyle(.red.opacity(0.7))
+                .foregroundStyle(BaniTheme.rose.opacity(0.8))
             Text(message.content)
                 .font(.subheadline)
-                .foregroundStyle(.red.opacity(0.8))
+                .foregroundStyle(BaniTheme.rose.opacity(0.9))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(.red.opacity(0.08))
+        .background(BaniTheme.rose.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -331,7 +338,7 @@ struct GurbaniAwareText: View {
                 } else if line.hasPrefix("- ") || line.hasPrefix("• ") {
                     HStack(alignment: .top, spacing: 6) {
                         Text("•")
-                            .foregroundStyle(BaniTheme.secondaryText)
+                            .foregroundStyle(BaniTheme.textSecondary)
                         Text(parseBold(String(line.dropFirst(2))))
                             .font(.subheadline)
                     }
@@ -356,9 +363,7 @@ struct GurbaniAwareText: View {
         let parts = text.components(separatedBy: "**")
         for (i, part) in parts.enumerated() {
             var chunk = AttributedString(part)
-            if i % 2 == 1 {
-                chunk.font = .subheadline.bold()
-            }
+            if i % 2 == 1 { chunk.font = .subheadline.bold() }
             result.append(chunk)
         }
         return result
@@ -374,21 +379,21 @@ struct TypingIndicator: View {
         HStack(alignment: .top, spacing: 8) {
             Text("ੴ")
                 .font(.system(size: 16))
-                .foregroundStyle(BaniTheme.saffron)
+                .foregroundStyle(BaniTheme.accentColor)
                 .frame(width: 24)
                 .padding(.top, 6)
 
             HStack(spacing: 4) {
                 ForEach(0..<3, id: \.self) { i in
                     Circle()
-                        .fill(BaniTheme.secondaryText.opacity(0.5))
+                        .fill(BaniTheme.accentColor.opacity(0.4))
                         .frame(width: 7, height: 7)
                         .offset(y: dotIndex == i ? -4 : 0)
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .background(Color(light: Color(hex: 0xF2F2F7), dark: Color(hex: 0x2C2C2E)))
+            .background(BaniTheme.cardBackground)
             .clipShape(BubbleShape(isUser: false))
 
             Spacer()
