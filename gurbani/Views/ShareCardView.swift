@@ -1,13 +1,14 @@
 import SwiftUI
+import UIKit
 
 struct ShareCardView: View {
     let gurmukhi: String
     let translation: String
+    let punjabiTranslation: String?
     let baniName: String
 
     var body: some View {
         VStack(spacing: 0) {
-            // Top warm gradient bar
             BaniTheme.goldGradient
                 .frame(height: 6)
 
@@ -26,8 +27,18 @@ struct ShareCardView: View {
                     .fill(Color(hex: 0xD4943A).opacity(0.3))
                     .frame(width: 60, height: 2)
 
+                // Punjabi translation (if included)
+                if let punjabi = punjabiTranslation, !punjabi.isEmpty {
+                    Text(punjabi)
+                        .font(.system(size: 17))
+                        .foregroundStyle(Color(hex: 0x5A4E44))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(4)
+                }
+
+                // English translation
                 Text(translation)
-                    .font(.system(size: 16))
+                    .font(.system(size: 15))
                     .foregroundStyle(Color(hex: 0x8B7E74))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -41,22 +52,16 @@ struct ShareCardView: View {
             .padding(.horizontal, 32)
             .padding(.vertical, 36)
 
-            HStack {
-                Text("Simple Gurbani")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(Color(hex: 0xD4943A))
-                Spacer()
-                Text("Understand what you recite")
-                    .font(.system(size: 11))
-                    .foregroundStyle(Color(hex: 0x8B7E74))
-            }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 14)
-            .background(Color(hex: 0xFDF2E3))
+            // Single footer line
+            Text("Simple Gurbani App")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(Color(hex: 0xD4943A))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(Color(hex: 0xFDF2E3))
         }
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: Color(hex: 0xC9B99A).opacity(0.2), radius: 16, y: 8)
         .frame(width: 340)
     }
 
@@ -67,17 +72,22 @@ struct ShareCardView: View {
                 .padding(24)
                 .background(Color(hex: 0xFFF8EF))
         )
-        renderer.scale = 3.0
+        renderer.scale = 2.0
         return renderer.uiImage ?? UIImage()
     }
 }
 
-struct ShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
+func shareViaUIKit(image: UIImage) {
+    let activityVC = UIActivityViewController(activityItems: [image], applicationActivities: nil)
 
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+          let rootVC = windowScene.windows.first?.rootViewController else { return }
+
+    var topVC = rootVC
+    while let presented = topVC.presentedViewController {
+        topVC = presented
     }
 
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+    activityVC.popoverPresentationController?.sourceView = topVC.view
+    topVC.present(activityVC, animated: true)
 }

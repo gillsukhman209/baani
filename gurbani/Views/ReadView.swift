@@ -241,8 +241,6 @@ struct BaniLineView: View {
     let onMarkRead: () -> Void
     var onAskAbout: ((String) -> Void)?
     var baniName: String = ""
-    @State private var showShareSheet = false
-    @State private var shareImage: UIImage?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -316,17 +314,13 @@ struct BaniLineView: View {
                 let card = ShareCardView(
                     gurmukhi: line.unicode,
                     translation: translation,
+                    punjabiTranslation: showPunjabi ? line.punjabiTranslation : nil,
                     baniName: baniName
                 )
-                shareImage = card.renderImage()
-                showShareSheet = true
+                let image = card.renderImage()
+                shareViaUIKit(image: image)
             } label: {
                 Label("Share as card", systemImage: "square.and.arrow.up")
-            }
-        }
-        .sheet(isPresented: $showShareSheet) {
-            if let image = shareImage {
-                ShareSheet(items: [image])
             }
         }
     }
